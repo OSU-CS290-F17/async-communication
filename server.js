@@ -1,6 +1,7 @@
 var path = require('path');
 var express = require('express');
 var exphbs = require('express-handlebars');
+var bodyParser = require('body-parser');
 
 var peopleData = require('./peopleData');
 var app = express();
@@ -8,6 +9,8 @@ var port = process.env.PORT || 3000;
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
+
+app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
   res.status(200).render('homePage');
@@ -32,8 +35,21 @@ app.get('/people/:personId', function(req, res, next) {
 
 app.use(express.static('public'));
 
-app.use('*', function (req, res) {
+app.get('*', function (req, res) {
   res.status(404).render('404');
+});
+
+app.post('/people/:personId/addPhoto', function (req, res, next) {
+  var personId = req.params.personId;
+  if (peopleData[personId]) {
+    console.log("== request body:", req.body);
+  } else {
+    next();
+  }
+});
+
+app.post('*', function (req, res) {
+  res.status(404).send("POST not allowed");
 });
 
 app.listen(port, function () {

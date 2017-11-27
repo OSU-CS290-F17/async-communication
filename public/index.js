@@ -12,6 +12,17 @@ function createPhotoCard(photoURL, caption) {
 }
 
 
+function getPersonId() {
+  var currentURL = window.location;
+  var urlComponents = currentURL.split('/');
+  if (urlComponents[0] === "" && urlComponents[1] === "people") {
+    return urlComponents[2];
+  } else {
+    return null;
+  }
+}
+
+
 function handleModalAcceptClick() {
 
   var photoURL = document.getElementById('photo-url-input').value.trim();
@@ -21,10 +32,14 @@ function handleModalAcceptClick() {
     alert("You must fill in all of the fields!");
   } else {
 
-    var newPhotoCard = createPhotoCard(photoURL, caption);
-    var photoCardContainer = document.querySelector('.photo-card-container');
+    var postRequest = new XMLHttpRequest();
+    var postURL = "/people/" + getPersonId() + "/addPhoto";
+    postRequest.open('POST', postURL);
 
-    photoCardContainer.insertAdjacentHTML('beforeend', newPhotoCard);
+    // var newPhotoCard = createPhotoCard(photoURL, caption);
+    // var photoCardContainer = document.querySelector('.photo-card-container');
+    //
+    // photoCardContainer.insertAdjacentHTML('beforeend', newPhotoCard);
 
     hideModal();
 

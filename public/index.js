@@ -13,7 +13,7 @@ function createPhotoCard(photoURL, caption) {
 
 
 function getPersonId() {
-  var currentURL = window.location;
+  var currentURL = window.location.pathname;
   var urlComponents = currentURL.split('/');
   if (urlComponents[0] === "" && urlComponents[1] === "people") {
     return urlComponents[2];
@@ -36,10 +36,25 @@ function handleModalAcceptClick() {
     var postURL = "/people/" + getPersonId() + "/addPhoto";
     postRequest.open('POST', postURL);
 
-    // var newPhotoCard = createPhotoCard(photoURL, caption);
-    // var photoCardContainer = document.querySelector('.photo-card-container');
-    //
-    // photoCardContainer.insertAdjacentHTML('beforeend', newPhotoCard);
+    var photoObj = {
+      photoURL: photoURL,
+      caption: caption
+    };
+    var requestBody = JSON.stringify(photoObj);
+    postRequest.setRequestHeader('Content-Type', 'application/json');
+
+    postRequest.addEventListener('load', function (event) {
+      if (event.target.status !== 200) {
+        alert("Error storing photo in database:\n\n\n" + event.target.response);
+      } else {
+        var newPhotoCard = createPhotoCard(photoURL, caption);
+        var photoCardContainer = document.querySelector('.photo-card-container');
+
+        photoCardContainer.insertAdjacentHTML('beforeend', newPhotoCard);
+      }
+    });
+
+    postRequest.send(requestBody);
 
     hideModal();
 

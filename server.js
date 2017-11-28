@@ -43,6 +43,12 @@ app.post('/people/:personId/addPhoto', function (req, res, next) {
   var personId = req.params.personId;
   if (peopleData[personId]) {
     console.log("== request body:", req.body);
+    peopleData[personId].photos.push({
+      photoURL: req.body.photoURL,
+      caption: req.body.caption
+    });
+    console.log("== new person data:", peopleData[personId]);
+    res.status(200).send("Success");
   } else {
     next();
   }
